@@ -75,7 +75,7 @@
         <!-- Header -->
         <header class="mb-8 text-center border-b pb-4 card" style="animation-delay: 0.1s;">
             <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Informe de Gestión Anual</h1>
-            <p class="text-gray-500 mt-1">Última actualización: 23 de Junio, 2025 - 10:00 hrs</p>
+            <p class="text-gray-500 mt-1">Última actualización: 30 de Junio, 2025 - 09:00 hrs</p>
         </header>
 
         <!-- KPIs Resumen (Nuevo Diseño con Barra de Progreso) -->
@@ -85,7 +85,7 @@
                 <!-- Avance 2025 -->
                 <div class="bg-emerald-50 border border-emerald-200 p-6 rounded-lg">
                     <p class="text-gray-500 text-sm">Avance 2025</p>
-                    <p class="text-2xl md:text-3xl font-bold text-emerald-600">$1.407.320.956</p>
+                    <p class="text-2xl md:text-3xl font-bold text-emerald-600">$1.417.820.956</p>
                 </div>
                 <!-- Meta 2025 -->
                 <div class="bg-blue-50 border border-blue-200 p-6 rounded-lg">
@@ -95,12 +95,12 @@
                 <!-- Alumnos con Clases -->
                  <div class="bg-gray-100 border border-gray-200 p-6 rounded-lg">
                     <p class="text-gray-500 text-sm">N° Alumnos con Clases</p>
-                    <p class="text-2xl md:text-3xl font-bold text-gray-800">3,727</p>
+                    <p class="text-2xl md:text-3xl font-bold text-gray-800">3,757</p>
                 </div>
                  <!-- TPM -->
                  <div class="bg-gray-100 border border-gray-200 p-6 rounded-lg">
                     <p class="text-gray-500 text-sm">Ticket Promedio (TPM)</p>
-                    <p class="text-2xl md:text-3xl font-bold text-gray-800">$377.602</p>
+                    <p class="text-2xl md:text-3xl font-bold text-gray-800">$377.381</p>
                 </div>
             </div>
             <!-- Progress Bar Section -->
@@ -126,7 +126,7 @@
                     <p id="kpi-venta-pct" class="kpi-value"></p>
                     <span id="kpi-venta-arrow" class="arrow-icon ml-2 text-2xl"></span>
                 </div>
-                <p class="text-sm text-gray-500"><span id="kpi-venta-2025"></span> vs <span id="kpi-venta-2024"></span></p>
+                <p class="text-sm text-gray-500"><span id="kpi-venta-2025"></span> (25) vs <span id="kpi-venta-2024"></span> (24)</p>
             </div>
             <div class="card kpi-growth-card text-center" style="animation-delay: 0.4s;">
                  <h3 class="flex items-center justify-center text-lg font-semibold text-gray-700 mb-4">
@@ -137,7 +137,7 @@
                     <p id="kpi-alumnos-pct" class="kpi-value"></p>
                     <span id="kpi-alumnos-arrow" class="arrow-icon ml-2 text-2xl"></span>
                 </div>
-                 <p class="text-sm text-gray-500"><span id="kpi-alumnos-2025"></span> vs <span id="kpi-alumnos-2024"></span></p>
+                 <p class="text-sm text-gray-500"><span id="kpi-alumnos-2025"></span> (25) vs <span id="kpi-alumnos-2024"></span> (24)</p>
             </div>
             <div class="card kpi-growth-card text-center" style="animation-delay: 0.5s;">
                 <h3 class="flex items-center justify-center text-lg font-semibold text-gray-700 mb-4">
@@ -148,7 +148,7 @@
                     <p id="kpi-convenios-pct" class="kpi-value"></p>
                     <span id="kpi-convenios-arrow" class="arrow-icon ml-2 text-2xl"></span>
                 </div>
-                <p class="text-sm text-gray-500"><span id="kpi-convenios-2025"></span> vs <span id="kpi-convenios-2024"></span></p>
+                <p class="text-sm text-gray-500"><span id="kpi-convenios-2025"></span> (25) vs <span id="kpi-convenios-2024"></span> (24)</p>
             </div>
         </section>
 
@@ -192,24 +192,24 @@
             const color_arrow_down = 'text-red-500';
 
             // --- DATA ---
-            const avance2025 = 1407320956;
+            const avance2025 = 1417820956;
             const meta2025 = 1860000000;
             const gestionData = {
                 labels: ['Nov', 'Dic', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
-                venta2024: [44519515, 203495020, 129749900, 12680000, 393519400, 305944021, 198998385, 177508646],
-                venta2025: [88086550, 247082650, 132449500, 40853289, 294027389, 229565318, 289970758, 85285502],
-                alumnos2024: [1363, 1607, 31931, 49, 3005, 2075, 1417, 477], 
-                alumnos2025: [520, 1450, 1427, 1596, 2140, 1184, 1791, 519],
+                venta2024: [44519515, 203495020, 129749900, 12680000, 393519400, 305944021, 198998385, 228420646],
+                venta2025: [88086550, 247082650, 132449500, 40853289, 294027389, 229565318, 289970758, 95785502],
+                alumnos2024: [1363, 1607, 31931, 49, 3005, 2075, 1417, 825], 
+                alumnos2025: [520, 1450, 1427, 1596, 2140, 1184, 1791, 639],
                 convenios2024: [3, 10, 6, 2, 21, 26, 21, 14],
-                convenios2025: [4, 13, 5, 11, 25, 23, 20, 9]
+                convenios2025: [4, 13, 5, 11, 25, 23, 20, 11]
             };
 
             const programasData = {
                 labels: ['Línea 1', 'Línea 2', 'Línea 3', 'E-learning', 'SM-LIBROS', 'SM-ENSAYOS', 'Capacitaciones'],
-                alumnos2024: [3435, 2735, 4173, 30270, 0, 1, 50],
-                monto2024: [1025029241, 161456740, 128528260, 89410000, 7231821, 49758825, 5000000],
-                alumnos2025: [3727, 2121, 3585, 230, 0, 0, 7],
-                monto2025: [1044492472, 192739750, 119746289, 9205000, 4605426, 34532019, 2000000]
+                alumnos2024: [3695, 2815, 4173, 30270, 0, 1, 50],
+                monto2024: [1074499241, 162904740, 128528260, 89410000, 7231821, 49758825, 5000000],
+                alumnos2025: [3757, 2121, 3675, 230, 0, 0, 7],
+                monto2025: [1051992472, 192739750, 122746289, 9205000, 4605426, 34532019, 2000000]
             };
             
             // Helper function to format numbers
@@ -237,7 +237,7 @@
             // --- KPI Calculations ---
             const totalVenta2024 = gestionData.venta2024.reduce((a, b) => a + b, 0);
             const totalVenta2025 = gestionData.venta2025.reduce((a, b) => a + b, 0);
-            const totalAlumnos2024 = 41924; 
+            const totalAlumnos2024 = 42272;
             const totalAlumnos2025 = gestionData.alumnos2025.reduce((a, b) => a + b, 0);
             const totalConvenios2024 = gestionData.convenios2024.reduce((a, b) => a + b, 0);
             const totalConvenios2025 = gestionData.convenios2025.reduce((a, b) => a + b, 0);
