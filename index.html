@@ -75,7 +75,7 @@
         <!-- Header -->
         <header class="mb-8 text-center border-b pb-4 card" style="animation-delay: 0.1s;">
             <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Informe de Gestión Anual</h1>
-            <p class="text-gray-500 mt-1">Última actualización: 30 de Junio, 2025 - 09:00 hrs</p>
+            <p class="text-gray-500 mt-1">Última actualización: 07 de Julio, 2025 - 10:15 hrs</p>
         </header>
 
         <!-- KPIs Resumen (Nuevo Diseño con Barra de Progreso) -->
@@ -85,7 +85,7 @@
                 <!-- Avance 2025 -->
                 <div class="bg-emerald-50 border border-emerald-200 p-6 rounded-lg">
                     <p class="text-gray-500 text-sm">Avance 2025</p>
-                    <p class="text-2xl md:text-3xl font-bold text-emerald-600">$1.417.820.956</p>
+                    <p class="text-2xl md:text-3xl font-bold text-emerald-600">$1.420.906.160</p>
                 </div>
                 <!-- Meta 2025 -->
                 <div class="bg-blue-50 border border-blue-200 p-6 rounded-lg">
@@ -100,7 +100,7 @@
                  <!-- TPM -->
                  <div class="bg-gray-100 border border-gray-200 p-6 rounded-lg">
                     <p class="text-gray-500 text-sm">Ticket Promedio (TPM)</p>
-                    <p class="text-2xl md:text-3xl font-bold text-gray-800">$377.381</p>
+                    <p class="text-2xl md:text-3xl font-bold text-gray-800">$378.202</p>
                 </div>
             </div>
             <!-- Progress Bar Section -->
@@ -130,7 +130,7 @@
             </div>
             <div class="card kpi-growth-card text-center" style="animation-delay: 0.4s;">
                  <h3 class="flex items-center justify-center text-lg font-semibold text-gray-700 mb-4">
-                    <svg class="w-5 h-5 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <svg class="w-5 h-5 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283-.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                     Crecimiento Alumnos (c/ Beca)
                 </h3>
                 <div class="flex items-center justify-center my-2">
@@ -192,24 +192,24 @@
             const color_arrow_down = 'text-red-500';
 
             // --- DATA ---
-            const avance2025 = 1417820956;
+            const avance2025 = 1420906160;
             const meta2025 = 1860000000;
             const gestionData = {
-                labels: ['Nov', 'Dic', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
-                venta2024: [44519515, 203495020, 129749900, 12680000, 393519400, 305944021, 198998385, 228420646],
-                venta2025: [88086550, 247082650, 132449500, 40853289, 294027389, 229565318, 289970758, 95785502],
-                alumnos2024: [1363, 1607, 31931, 49, 3005, 2075, 1417, 825], 
-                alumnos2025: [520, 1450, 1427, 1596, 2140, 1184, 1791, 639],
-                convenios2024: [3, 10, 6, 2, 21, 26, 21, 14],
-                convenios2025: [4, 13, 5, 11, 25, 23, 20, 11]
+                labels: ['Nov', 'Dic', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul'],
+                venta2024: [44519515, 203495020, 129749900, 12680000, 393519400, 305944021, 198998385, 228420646, 34454088],
+                venta2025: [88086550, 247082650, 132449500, 40853289, 294027389, 229565318, 289970758, 95785502, 3085204],
+                alumnos2024: [1363, 1607, 31931, 49, 3005, 2075, 1417, 825, 270], 
+                alumnos2025: [520, 1450, 1427, 1596, 2140, 1184, 1791, 639, 0],
+                convenios2024: [3, 10, 6, 2, 21, 26, 21, 14, 6],
+                convenios2025: [4, 13, 5, 11, 23, 23, 20, 11, 1]
             };
 
             const programasData = {
                 labels: ['Línea 1', 'Línea 2', 'Línea 3', 'E-learning', 'SM-LIBROS', 'SM-ENSAYOS', 'Capacitaciones'],
-                alumnos2024: [3695, 2815, 4173, 30270, 0, 1, 50],
-                monto2024: [1074499241, 162904740, 128528260, 89410000, 7231821, 49758825, 5000000],
-                alumnos2025: [3757, 2121, 3675, 230, 0, 0, 7],
-                monto2025: [1051992472, 192739750, 122746289, 9205000, 4605426, 34532019, 2000000]
+                alumnos2024: [3695, 2815, 4523, 30270, 0, 1, 50],
+                monto2024: [1092999241, 162904740, 132028260, 89410000, 8558414, 60886300, 5000000],
+                alumnos2025: [3757, 2121, 3656, 230, 0, 0, 7],
+                monto2025: [1051992472, 192739750, 122746289, 9205000, 4773172, 37449477, 2000000]
             };
             
             // Helper function to format numbers
@@ -237,7 +237,7 @@
             // --- KPI Calculations ---
             const totalVenta2024 = gestionData.venta2024.reduce((a, b) => a + b, 0);
             const totalVenta2025 = gestionData.venta2025.reduce((a, b) => a + b, 0);
-            const totalAlumnos2024 = 42272;
+            const totalAlumnos2024 = 42542;
             const totalAlumnos2025 = gestionData.alumnos2025.reduce((a, b) => a + b, 0);
             const totalConvenios2024 = gestionData.convenios2024.reduce((a, b) => a + b, 0);
             const totalConvenios2025 = gestionData.convenios2025.reduce((a, b) => a + b, 0);
