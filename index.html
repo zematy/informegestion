@@ -3,591 +3,364 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Informes de Rendimiento y Seguimiento de Sedes</title>
+    <title>Informe de Gestión</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Estilos Generales */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f0f2f5;
+            background-color: #f9fafb;
+            /* Subtle dot pattern for a premium feel */
+            background-image: radial-gradient(#d1d5db 0.5px, transparent 0.5px);
+            background-size: 15px 15px;
         }
-
-        /* Estilos Pestañas */
-        .tab-button {
-            transition: background-color 0.3s, color 0.3s;
-        }
-        .tab-button.active {
+        .card {
             background-color: white;
-            color: #1d4ed8;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        
-        /* Estilos Filtro División */
-        .filter-button {
-            transition: background-color 0.3s, color 0.3s;
-        }
-        .filter-button.active {
-            background-color: #3b82f6;
-            color: white;
-            font-weight: 600;
-        }
-
-        /* Estilos Informe 1 (Light) */
-        .main-card {
-            background-color: white;
-            border-radius: 1.5rem;
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            border-radius: 0.75rem;
             border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
+            padding: 1.5rem; /* Default padding */
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            opacity: 0; /* Initially hidden for animation */
+            transform: translateY(20px); /* Start slightly lower for animation */
+            animation: fadeIn 0.5s forwards;
         }
-        .category-card {
-            padding: 1.5rem;
-            border-radius: 1rem;
+        @media (min-width: 768px) {
+            .card {
+                padding: 2rem; /* More padding on larger screens */
+            }
+        }
+        .kpi-growth-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .kpi-value {
+            font-size: 2rem; 
+            font-weight: 700;
+            line-height: 2.25rem;
+        }
+        /* Stylized Progress Bar */
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e5e7eb;
+            border-radius: 9999px;
+            height: 24px;
+        }
+        .progress-bar {
+            background-image: linear-gradient(to right, rgb(16, 185, 129), rgb(6, 182, 212));
             height: 100%;
+            border-radius: 9999px;
+            transition: width 1.5s cubic-bezier(0.25, 1, 0.5, 1);
         }
-        .sede-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid var(--border-color, #f3f4f6);
-            font-size: 0.875rem;
-        }
-        .sede-item:last-child {
-            border-bottom: none;
-        }
-        .compact-list-item {
-            padding-bottom: 0.5rem;
-            break-inside: avoid;
-        }
-
-        /* --- ¡NUEVOS ESTILOS! TEMA OSCURO PARA INFORME --- */
-        .report-dark .main-card {
-            background-color: #1f2937; /* gray-800 */
-            color: #d1d5db; /* gray-300 */
-            border-color: #4b5563; /* gray-600 */
-        }
-        .report-dark h1, .report-dark h2 {
-            color: #f9fafb; /* gray-50 */
-        }
-        .report-dark .text-gray-500 {
-            color: #9ca3af; /* gray-400 */
-        }
-        .report-dark .border-b {
-            border-color: #4b5563; /* gray-600 */
-        }
-        .report-dark .kpi-card-print {
-            background-color: #374151 !important; /* gray-700 */
-            border: 1px solid #4b5563; /* gray-600 */
-        }
-        .report-dark .text-blue-800 { color: #93c5fd; }
-        .report-dark .text-blue-600 { color: #60a5fa; }
-        .report-dark .text-green-800 { color: #86efac; }
-        .report-dark .text-green-600 { color: #4ade80; }
-        .report-dark .text-red-800 { color: #fca5a5; }
-        .report-dark .text-red-600 { color: #f87171; }
-        .report-dark .text-yellow-800 { color: #fde047; }
-        .report-dark .text-yellow-700 { color: #facc15; }
-        .report-dark .category-card {
-            background-color: #374151 !important; /* gray-700 */
-        }
-        .report-dark #destacadas-card { border-color: #22c55e; }
-        .report-dark #destacadas-card h3 { color: #4ade80; }
-        .report-dark #destacadas-list .text-green-700 { color: #86efac; }
-        .report-dark #encamino-card { border-color: #eab308; }
-        .report-dark #encamino-card h3 { color: #facc15; }
-        .report-dark #encamino-list .text-yellow-700 { color: #fde047; }
-        .report-dark #alerta-card { border-color: #f97316; }
-        .report-dark #alerta-card h3 { color: #fb923c; }
-        .report-dark #alerta-list .text-orange-700 { color: #fdba74; }
-        .report-dark #critico-card { border-color: #ef4444; }
-        .report-dark #critico-card h3 { color: #f87171; }
-        .report-dark #critico-list .text-red-700 { color: #fca5a5; }
-        .report-dark .sede-item {
-            border-color: #4b5563; /* gray-600 */
-        }
-        .report-dark .font-semibold.text-gray-700 {
-            color: #d1d5db; /* gray-300 */
-        }
-        .report-dark .italic.text-gray-500 {
-            color: #9ca3af; /* gray-400 */
-        }
-
-        /* Estilos Dashboard 2 */
-        .card-sede {
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-        }
-        .card-sede:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-        #modal-backdrop {
-            transition: opacity 0.3s ease-in-out;
-        }
-        #modal-panel {
-            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-        }
-        .tier-next-goal {
-            transform: scale(1.02);
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
-        }
-
-        /* Optimización para impresión */
-        @media print {
-            body {
-                -webkit-print-color-adjust: exact;
-                color-adjust: exact;
-                background-color: white;
+        /* Entry Animation */
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
-            .no-print {
-                display: none;
-            }
-            .tab-content {
-                display: block !important; /* Muestra ambos contenidos al imprimir */
-            }
-            .main-card, .card-sede {
-                box-shadow: none !important;
-                border: 1px solid #ccc !important;
-                padding: 0 !important;
-                margin: 0 0 2rem 0 !important;
-                max-width: 100% !important;
-            }
-            .category-card, .kpi-card-print {
-                border: 1px solid #ccc !important;
-                break-inside: avoid;
-            }
-            .page-break {
-                page-break-before: always;
-            }
+        }
+        .kpi-growth-card:hover .arrow-icon {
+            animation: bounce 0.6s ease-in-out;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
         }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="bg-gray-50">
 
-    <div class="max-w-7xl mx-auto">
-        <!-- Controles Superiores: Pestañas y Filtro -->
-        <div class="flex justify-center items-center mb-4 relative">
-             <!-- Navegación de Pestañas -->
-            <div class="bg-gray-200 p-2 rounded-xl flex space-x-2 max-w-md mx-auto no-print">
-                <button onclick="switchTab('informe')" id="btn-informe" class="tab-button w-full text-center font-semibold text-gray-600 p-3 rounded-lg">Informe de Rendimiento</button>
-                <button onclick="switchTab('dashboard')" id="btn-dashboard" class="tab-button w-full text-center font-semibold text-gray-600 p-3 rounded-lg">Dashboard de Seguimiento</button>
-            </div>
-             <!-- Filtro de División -->
-            <div class="absolute right-0 top-0 no-print">
-                <div class="flex space-x-1 bg-gray-200 p-1 rounded-lg text-sm">
-                    <button onclick="applyFilter('Todos')" id="filter-btn-Todos" class="filter-button px-4 py-1 rounded-md">Todos</button>
-                    <button onclick="applyFilter('Dani')" id="filter-btn-Dani" class="filter-button px-4 py-1 rounded-md">Dani</button>
-                    <button onclick="applyFilter('Feña')" id="filter-btn-Feña" class="filter-button px-4 py-1 rounded-md">Feña</button>
+    <div class="container mx-auto p-4 md:p-8">
+        <!-- Header -->
+        <header class="mb-8 text-center border-b pb-4 card" style="animation-delay: 0.1s;">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Informe de Gestión Anual</h1>
+            <p class="text-gray-500 mt-1">Última actualización: 28 de Julio, 2025 - 09:30 hrs</p>
+        </header>
+
+        <!-- KPIs Resumen (Nuevo Diseño con Barra de Progreso) -->
+        <section class="card mb-8" style="animation-delay: 0.2s;">
+            <h2 class="text-2xl font-semibold mb-6 text-gray-700">Resumen Principal 2025</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Avance 2025 -->
+                <div class="bg-emerald-50 border border-emerald-200 p-6 rounded-lg">
+                    <p class="text-gray-500 text-sm">Avance 2025</p>
+                    <p class="text-2xl md:text-3xl font-bold text-emerald-600">$1.463.291.454</p>
+                </div>
+                <!-- Meta 2025 -->
+                <div class="bg-blue-50 border border-blue-200 p-6 rounded-lg">
+                    <p class="text-gray-500 text-sm">Meta 2025</p>
+                    <p class="text-2xl md:text-3xl font-bold text-blue-600">$1.860.000.000</p>
+                </div>
+                <!-- Alumnos con Clases -->
+                 <div class="bg-gray-100 border border-gray-200 p-6 rounded-lg">
+                    <p class="text-gray-500 text-sm">N° Alumnos con Clases</p>
+                    <p class="text-2xl md:text-3xl font-bold text-gray-800">3,916</p>
+                </div>
+                 <!-- TPM -->
+                 <div class="bg-gray-100 border border-gray-200 p-6 rounded-lg">
+                    <p class="text-gray-500 text-sm">Ticket Promedio (TPM)</p>
+                    <p class="text-2xl md:text-3xl font-bold text-gray-800">$373.670</p>
                 </div>
             </div>
-        </div>
-
-
-        <!-- Contenido Pestaña 1: Informe de Rendimiento (con tema oscuro) -->
-        <div id="informe" class="tab-content report-dark">
-            <div class="main-card p-6 md:p-8">
-                <header class="mb-6 text-center border-b pb-6">
-                    <h1 class="text-3xl lg:text-4xl font-black">Informe de Rendimiento de Sedes</h1>
-                    <p id="informe-subtitle" class="text-md lg:text-lg text-gray-500 mt-2">Estado de avance al 28 de Julio de 2025 (a 5 meses del cierre de año)</p>
-                </header>
-                <section class="mb-8 border-b pb-8">
-                    <h2 class="text-2xl font-bold text-center mb-6">Resumen General</h2>
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-                        <div id="informe-kpis" class="grid grid-cols-2 gap-4 text-center">
-                            <!-- KPIs se generarán dinámicamente -->
-                        </div>
-                        <div><div class="h-[250px] md:h-[300px] w-full flex items-center justify-center"><canvas id="statusDonutChart"></canvas></div></div>
-                    </div>
-                </section>
-                <section>
-                     <h2 class="text-2xl font-bold text-center mb-6">Clasificación Detallada por Sede</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                        <div id="destacadas-card" class="category-card bg-green-50 border"><h3 class="text-xl font-bold text-center mb-4">🏆 Destacadas (>100%)</h3><div id="destacadas-list"></div></div>
-                        <div id="encamino-card" class="category-card bg-yellow-50 border"><h3 class="text-xl font-bold text-center mb-4">👍 En Camino (75-99%)</h3><div id="encamino-list"></div></div>
-                        <div id="alerta-card" class="category-card bg-orange-50 border"><h3 class="text-xl font-bold text-center mb-4">⚠️ Alerta (50-74%)</h3><div id="alerta-list"></div></div>
-                    </div>
-                    <div id="critico-card" class="category-card bg-red-50 border mt-6">
-                         <h3 class="text-xl font-bold text-center mb-4">🚨 Crítico (&lt;50%)</h3>
-                         <div id="critico-list"></div>
-                    </div>
-                </section>
-            </div>
-        </div>
-
-        <!-- Contenido Pestaña 2: Dashboard de Seguimiento -->
-        <div id="dashboard" class="tab-content">
-             <header class="mb-8 text-center">
-                 <h1 class="text-3xl font-bold text-gray-800">Dashboard de Seguimiento de Sedes</h1>
-                 <p class="text-gray-500">Haz clic en una sede para ver su progreso, bonos y una frase motivadora.</p>
-             </header>
-             <div id="resumen-general" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"></div>
-             <div id="lista-sedes" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
-        </div>
-    </div>
-
-    <!-- Modal para detalles de la sede (del dashboard) -->
-    <div id="modal-backdrop" class="fixed inset-0 bg-gray-900 bg-opacity-75 hidden flex items-center justify-center z-50 p-4" onclick="closeModal()">
-        <div id="modal-panel" class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl transform scale-95 opacity-0" onclick="event.stopPropagation()">
-            <div class="p-8 md:p-10">
-                <div class="flex justify-between items-start mb-6">
-                    <div>
-                        <p class="text-sm font-medium text-blue-600">Detalle de Sede</p>
-                        <h2 id="modal-sede-nombre" class="text-4xl font-extrabold text-gray-900"></h2>
-                    </div>
-                    <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                    </button>
+            <!-- Progress Bar Section -->
+             <div class="mt-8 pt-6 border-t border-gray-200">
+                <div class="flex justify-between items-end mb-2">
+                    <span class="text-lg font-medium text-gray-600">Progreso vs Meta</span>
+                    <span id="progress-percentage" class="text-2xl font-bold text-emerald-600">0%</span>
                 </div>
-                <div id="modal-content" class="space-y-8"></div>
+                <div class="progress-bar-container">
+                    <div id="progress-bar" class="progress-bar" style="width: 0%;"></div>
+                </div>
             </div>
-        </div>
-    </div>
+        </section>
 
+        <!-- KPIs Crecimiento Anual -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="card kpi-growth-card text-center" style="animation-delay: 0.3s;">
+                <h3 class="flex items-center justify-center text-lg font-semibold text-gray-700 mb-4">
+                    <svg class="w-5 h-5 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                    Crecimiento Venta Total
+                </h3>
+                <div class="flex items-center justify-center my-2">
+                    <p id="kpi-venta-pct" class="kpi-value"></p>
+                    <span id="kpi-venta-arrow" class="arrow-icon ml-2 text-2xl"></span>
+                </div>
+                <p class="text-sm text-gray-500"><span id="kpi-venta-2025"></span> (25) vs <span id="kpi-venta-2024"></span> (24)</p>
+            </div>
+            <div class="card kpi-growth-card text-center" style="animation-delay: 0.4s;">
+                 <h3 class="flex items-center justify-center text-lg font-semibold text-gray-700 mb-4">
+                    <svg class="w-5 h-5 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283-.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    Crecimiento Alumnos (c/ Beca)
+                </h3>
+                <div class="flex items-center justify-center my-2">
+                    <p id="kpi-alumnos-pct" class="kpi-value"></p>
+                    <span id="kpi-alumnos-arrow" class="arrow-icon ml-2 text-2xl"></span>
+                </div>
+                 <p class="text-sm text-gray-500"><span id="kpi-alumnos-2025"></span> (25) vs <span id="kpi-alumnos-2024"></span> (24)</p>
+            </div>
+            <div class="card kpi-growth-card text-center" style="animation-delay: 0.5s;">
+                <h3 class="flex items-center justify-center text-lg font-semibold text-gray-700 mb-4">
+                    <svg class="w-5 h-5 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m-1 4h1m-1 4h1m4-12h1m-1 4h1m-1 4h1m-1 4h1"></path></svg>
+                    Crecimiento Convenios
+                </h3>
+                <div class="flex items-center justify-center my-2">
+                    <p id="kpi-convenios-pct" class="kpi-value"></p>
+                    <span id="kpi-convenios-arrow" class="arrow-icon ml-2 text-2xl"></span>
+                </div>
+                <p class="text-sm text-gray-500"><span id="kpi-convenios-2025"></span> (25) vs <span id="kpi-convenios-2024"></span> (24)</p>
+            </div>
+        </section>
+
+
+        <!-- Resumen de Gestión -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div class="card flex flex-col" style="animation-delay: 0.6s;">
+                <h2 class="text-xl font-semibold mb-6 text-gray-700">Evolución de Ventas (2024 vs 2025)</h2>
+                <div class="relative h-80 flex-grow">
+                    <canvas id="ventasChart"></canvas>
+                </div>
+            </div>
+            <div class="card flex flex-col" style="animation-delay: 0.7s;">
+                <h2 class="text-xl font-semibold mb-6 text-gray-700">Evolución de Alumnos (2024 vs 2025)</h2>
+                <div class="relative h-80 flex-grow">
+                    <canvas id="alumnosChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Comparativo Programas -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="card" style="animation-delay: 0.8s;">
+                 <h2 class="text-xl font-semibold mb-6 text-gray-700">Alumnos por Programa S/B (2024 vs 2025)</h2>
+                <canvas id="programasAlumnosChart"></canvas>
+            </div>
+            <div class="card" style="animation-delay: 0.9s;">
+                 <h2 class="text-xl font-semibold mb-6 text-gray-700">Ingresos por Programa (2024 vs 2025)</h2>
+                <canvas id="programasMontoChart"></canvas>
+            </div>
+        </section>
+
+    </div>
 
     <script>
-        // --- DATA COMPARTIDA (UNIFICADA) ---
-        const performanceData = [
-            { id: 1, sede: "Alameda", meta: 16464000, avance: 19100000, division: "Dani" },
-            { id: 2, sede: "Alto Hospicio", meta: 7000000, avance: 0, division: "Dani" },
-            { id: 3, sede: "Antofagasta", meta: 7000000, avance: 4950000, division: "Dani" },
-            { id: 4, sede: "Arica", meta: 12315000, avance: 12534900, division: "Dani" },
-            { id: 5, sede: "Calama", meta: 38036000, avance: 14450000, division: "Dani" },
-            { id: 6, sede: "Chillán", meta: 18360800, avance: 6116350, division: "Feña" },
-            { id: 7, sede: "Concepción", meta: 24281600, avance: 30798264, division: "Feña" },
-            { id: 8, sede: "Copiapó", meta: 20144880, avance: 19606300, division: "Feña" },
-            { id: 9, sede: "Coquimbo", meta: 7000000, avance: 0, division: "Feña" },
-            { id: 10, sede: "Coronel", meta: 52200000, avance: 48256289, division: "Feña" },
-            { id: 11, sede: "Curicó", meta: 14079184, avance: 18268400, division: "Dani" },
-            { id: 12, sede: "Gran Avenida", meta: 8577000, avance: 10975000, division: "Feña" },
-            { id: 13, sede: "Independencia", meta: 31707200, avance: 39621000, division: "Dani" },
-            { id: 14, sede: "Iquique", meta: 8373120, avance: 0, division: "Dani" },
-            { id: 15, sede: "La Florida", meta: 25519984, avance: 23427500, division: "Dani" },
-            { id: 16, sede: "La Serena", meta: 7000000, avance: 0, division: "Feña" },
-            { id: 17, sede: "Las Condes", meta: 10500000, avance: 7813600, division: "Dani" },
-            { id: 18, sede: "Linares", meta: 45000000, avance: 39999986, division: "Dani" },
-            { id: 19, sede: "Los Andes", meta: 15456807, avance: 6000000, division: "Dani" },
-            { id: 20, sede: "Los Ángeles", meta: 7767200, avance: 0, division: "Feña" },
-            { id: 21, sede: "Maipú", meta: 38080000, avance: 0, division: "Feña" },
-            { id: 22, sede: "Melipilla", meta: 39446400, avance: 35450000, division: "Feña" },
-            { id: 23, sede: "Ñuñoa", meta: 10846080, avance: 0, division: "Dani" },
-            { id: 24, sede: "Osorno", meta: 11200000, avance: 10000000, division: "Feña" },
-            { id: 25, sede: "Ovalle", meta: 20160000, avance: 0, division: "Feña" },
-            { id: 26, sede: "Providencia", meta: 7000000, avance: 9407300, division: "Dani" },
-            { id: 27, sede: "Puente Alto", meta: 30492000, avance: 11880000, division: "Feña" },
-            { id: 28, sede: "Puerto Montt", meta: 29388800, avance: 47350000, division: "Feña" },
-            { id: 29, sede: "Punta Arenas", meta: 7000000, avance: 0, division: "Feña" },
-            { id: 30, sede: "Quilicura", meta: 36657550, avance: 0, division: "Feña" },
-            { id: 31, sede: "Quillota", meta: 7728000, avance: 0, division: "Dani" },
-            { id: 32, sede: "Quilpué", meta: 7000000, avance: 0, division: "Dani" },
-            { id: 33, sede: "Rancagua", meta: 7000000, avance: 0, division: "Feña" },
-            { id: 34, sede: "San Bernardo", meta: 7000000, avance: 9859000, division: "Feña" },
-            { id: 35, sede: "San Felipe", meta: 11936575, avance: 0, division: "Dani" },
-            { id: 36, sede: "San Fernando", meta: 39854000, avance: 19800000, division: "Feña" },
-            { id: 37, sede: "Santa Cruz", meta: 22497000, avance: 0, division: "Feña" },
-            { id: 38, sede: "Talagante", meta: 7000000, avance: 0, division: "Feña" },
-            { id: 39, sede: "Talca", meta: 66064500, avance: 72718008, division: "Dani" },
-            { id: 40, sede: "Temuco", meta: 68257690, avance: 51204000, division: "Dani" },
-            { id: 41, sede: "Valdivia", meta: 33067104, avance: 17234000, division: "Feña" },
-            { id: 42, sede: "Valparaíso", meta: 28224000, avance: 32500000, division: "Dani" },
-            { id: 43, sede: "Villa Alemana", meta: 52932800, avance: 24890000, division: "Dani" },
-            { id: 44, sede: "Viña del mar", meta: 13261920, avance: 15400000, division: "Dani" }
-        ].map(d => ({...d, percent: d.meta > 0 ? (d.avance / d.meta) * 100 : 0 }));
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- PALETA DE COLORES ESTRATÉGICA ---
+            const color2024 = 'rgb(59, 130, 246)';       // Blue-500
+            const color2025 = 'rgb(16, 185, 129)';       // Emerald-500
+            const color_arrow_up = 'text-green-500';
+            const color_arrow_down = 'text-red-500';
 
-        let currentFilter = 'Todos';
-        let statusChart = null; // Variable to hold the chart instance
+            // --- DATA ---
+            const avance2025 = 1463291454;
+            const meta2025 = 1860000000;
+            const gestionData = {
+                labels: ['Nov', 'Dic', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul'],
+                venta2024: [44519515, 203495020, 129749900, 12680000, 393519400, 305944021, 198998385, 228420646, 34454088],
+                venta2025: [88086550, 247082650, 132449500, 40853289, 294027389, 229565318, 289970758, 95785502, 45470498],
+                alumnos2024: [1363, 1607, 31931, 49, 3005, 2075, 1417, 825, 270], 
+                alumnos2025: [520, 1452, 1427, 1596, 2140, 1184, 1791, 639, 435],
+                convenios2024: [3, 10, 6, 2, 21, 26, 21, 14, 6],
+                convenios2025: [4, 13, 5, 11, 23, 23, 20, 11, 10]
+            };
 
-        // --- LÓGICA DE CONTROLES ---
-        function switchTab(tabName) {
-            document.getElementById('informe').classList.remove('active');
-            document.getElementById('dashboard').classList.remove('active');
-            document.getElementById('btn-informe').classList.remove('active');
-            document.getElementById('btn-dashboard').classList.remove('active');
-
-            document.getElementById(tabName).classList.add('active');
-            document.getElementById('btn-' + tabName).classList.add('active');
-        }
-
-        function applyFilter(division) {
-            currentFilter = division;
+            const programasData = {
+                labels: ['Línea 1', 'Línea 2', 'Línea 3', 'E-learning', 'SM-LIBROS', 'SM-ENSAYOS', 'Capacitaciones'],
+                alumnos2024: [3815, 2815, 4523, 30270, 0, 1, 50],
+                monto2024: [1092999241, 162904740, 132028260, 89410000, 8558414, 60886300, 5000000],
+                alumnos2025: [3916, 2121, 3872, 230, 0, 0, 7],
+                monto2025: [1088179366, 192739750, 128944688, 9205000, 4773172, 37449477, 2000000]
+            };
             
-            document.querySelectorAll('.filter-button').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(`filter-btn-${division}`).classList.add('active');
+            // Helper function to format numbers
+            const formatCurrency = (value) => new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', minimumFractionDigits: 0 }).format(value);
+            const formatNumber = (value) => new Intl.NumberFormat('es-CL').format(value);
 
-            renderAll();
-        }
+            // --- Animate Progress Bar ---
+            const progressBar = document.getElementById('progress-bar');
+            const progressPercentage = document.getElementById('progress-percentage');
+            const targetPercentage = (avance2025 / meta2025) * 100;
+            setTimeout(() => {
+                progressBar.style.width = `${targetPercentage}%`;
+                let current = 0;
+                const interval = setInterval(() => {
+                    if (current >= targetPercentage) {
+                        progressPercentage.textContent = `${Math.round(targetPercentage)}%`;
+                        clearInterval(interval);
+                    } else {
+                        current++;
+                        progressPercentage.textContent = `${current}%`;
+                    }
+                }, 20);
+            }, 500);
 
-        function renderAll() {
-            let dataToRender = performanceData;
-            if (currentFilter !== 'Todos') {
-                dataToRender = performanceData.filter(d => d.division === currentFilter);
+            // --- KPI Calculations ---
+            const totalVenta2024 = gestionData.venta2024.reduce((a, b) => a + b, 0);
+            const totalVenta2025 = gestionData.venta2025.reduce((a, b) => a + b, 0);
+            const totalAlumnos2024 = 42542;
+            const totalAlumnos2025 = gestionData.alumnos2025.reduce((a, b) => a + b, 0);
+            const totalConvenios2024 = gestionData.convenios2024.reduce((a, b) => a + b, 0);
+            const totalConvenios2025 = gestionData.convenios2025.reduce((a, b) => a + b, 0);
+
+            const pctChange = (val2025, val2024) => val2024 === 0 ? 100 : ((val2025 - val2024) / val2024 * 100);
+
+            const ventaPct = pctChange(totalVenta2025, totalVenta2024);
+            const alumnosPct = pctChange(totalAlumnos2025, totalAlumnos2024);
+            const conveniosPct = pctChange(totalConvenios2025, totalConvenios2024);
+            
+            // --- Update KPI Cards ---
+            function updateKpiCard(pctElId, arrowElId, percentage) {
+                const pctEl = document.getElementById(pctElId);
+                const arrowEl = document.getElementById(arrowElId);
+                
+                pctEl.textContent = `${percentage.toFixed(1)}%`;
+                arrowEl.classList.remove(color_arrow_up, color_arrow_down);
+
+                if (percentage >= 0) {
+                    pctEl.classList.add('text-gray-800');
+                    arrowEl.innerHTML = '▲';
+                    arrowEl.classList.add(color_arrow_up);
+                } else {
+                    pctEl.classList.add('text-gray-500');
+                    arrowEl.innerHTML = '▼';
+                    arrowEl.classList.add(color_arrow_down);
+                }
             }
-            initInforme(dataToRender);
-            initDashboard(dataToRender);
-        }
 
-        // --- LÓGICA INFORME 1 ---
-        function initInforme(data) {
-            updateInformeKPIs(data);
+            updateKpiCard('kpi-venta-pct', 'kpi-venta-arrow', ventaPct);
+            document.getElementById('kpi-venta-2025').textContent = formatCurrency(totalVenta2025);
+            document.getElementById('kpi-venta-2024').textContent = formatCurrency(totalVenta2024);
 
-            const destacadasSedes = data.filter(d => d.percent >= 100).sort((a,b) => b.percent - a.percent);
-            const enCaminoSedes = data.filter(d => d.percent >= 75 && d.percent < 100).sort((a,b) => b.percent - a.percent);
-            const alertaSedes = data.filter(d => d.percent >= 50 && d.percent < 75).sort((a,b) => b.percent - a.percent);
-            const criticoSedes = data.filter(d => d.percent < 50).sort((a,b) => b.percent - a.percent);
+            updateKpiCard('kpi-alumnos-pct', 'kpi-alumnos-arrow', alumnosPct);
+            document.getElementById('kpi-alumnos-2025').textContent = formatNumber(totalAlumnos2025);
+            document.getElementById('kpi-alumnos-2024').textContent = formatNumber(totalAlumnos2024);
 
-            populateVerticalList('destacadas-list', destacadasSedes, 'text-green-700', '#bbf7d0');
-            populateVerticalList('encamino-list', enCaminoSedes, 'text-yellow-700', '#fef08a');
-            populateVerticalList('alerta-list', alertaSedes, 'text-orange-700', '#fed7aa');
-            populateCompactList('critico-list', criticoSedes, 'text-red-700');
+            updateKpiCard('kpi-convenios-pct', 'kpi-convenios-arrow', conveniosPct);
+            document.getElementById('kpi-convenios-2025').textContent = formatNumber(totalConvenios2025);
+            document.getElementById('kpi-convenios-2024').textContent = formatNumber(totalConvenios2024);
 
-            const statusCounts = { 'Destacadas': destacadasSedes.length, 'En Camino': enCaminoSedes.length, 'Alerta': alertaSedes.length, 'Crítico': criticoSedes.length };
-            const ctxStatus = document.getElementById('statusDonutChart').getContext('2d');
+            // --- Chart.js configurations ---
+            const defaultChartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'rectRounded'} }, tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${c.formattedValue}` } } },
+                scales: { 
+                    y: { 
+                        grid: { drawBorder: false },
+                        ticks: { callback: (v) => v >= 1000000 ? `$${v/1000000}M` : `$${v/1000}k` } 
+                    }, 
+                    x: { 
+                        grid: { display: false } 
+                    } 
+                }
+            };
             
-            if (statusChart) {
-                statusChart.destroy();
-            }
-            
-            statusChart = new Chart(ctxStatus, {
-                type: 'doughnut',
+            const ctxVentas = document.getElementById('ventasChart').getContext('2d');
+            new Chart(ctxVentas, {
+                type: 'line',
                 data: {
-                    labels: Object.keys(statusCounts).map(k => `${k} (${statusCounts[k]})`),
+                    labels: gestionData.labels,
                     datasets: [{
-                        label: '# de Sedes',
-                        data: Object.values(statusCounts),
-                        backgroundColor: ['#22c55e', '#eab308', '#f97316', '#ef4444'],
-                        borderColor: '#1f2937', // Dark theme background
-                        borderWidth: 4
+                        label: 'Venta 2024', data: gestionData.venta2024, borderColor: color2024,
+                        backgroundColor: color2024.replace('rgb', 'rgba').replace(')',', 0.1)'), fill: true, tension: 0
+                    }, {
+                        label: 'Venta 2025', data: gestionData.venta2025, borderColor: color2025,
+                        backgroundColor: color2025.replace('rgb', 'rgba').replace(')',', 0.1)'), fill: true, tension: 0
                     }]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'right',
-                            labels: {
-                                padding: 20,
-                                font: { size: 12 },
-                                color: '#d1d5db' // Dark theme text
-                            }
-                        }
-                    }
+                options: { ...defaultChartOptions, plugins: { ...defaultChartOptions.plugins, tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${formatCurrency(c.raw)}` } } }}
+            });
+
+            const ctxAlumnos = document.getElementById('alumnosChart').getContext('2d');
+            new Chart(ctxAlumnos, {
+                type: 'line',
+                data: {
+                    labels: gestionData.labels,
+                    datasets: [{
+                        label: 'Alumnos 2024', data: gestionData.alumnos2024, borderColor: color2024,
+                        backgroundColor: color2024.replace('rgb', 'rgba').replace(')',', 0.1)'), fill: true, tension: 0
+                    }, {
+                        label: 'Alumnos 2025', data: gestionData.alumnos2025, borderColor: color2025,
+                        backgroundColor: color2025.replace('rgb', 'rgba').replace(')',', 0.1)'), fill: true, tension: 0
+                    }]
+                },
+                options: { ...defaultChartOptions, scales: { ...defaultChartOptions.scales, y: { beginAtZero: true }}, plugins: { ...defaultChartOptions.plugins, tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${formatNumber(c.raw)}`}}}}
+            });
+
+            const barChartOptions = {
+                responsive: true, indexAxis: 'y',
+                plugins: { legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'rectRounded'}}, tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${c.formattedValue}` } } },
+                scales: { 
+                    x: { beginAtZero: true, grid: { display: false } },
+                    y: { grid: { display: false }}
                 }
+            };
+
+            const ctxProgramasAlumnos = document.getElementById('programasAlumnosChart').getContext('2d');
+            new Chart(ctxProgramasAlumnos, {
+                type: 'bar',
+                data: {
+                    labels: programasData.labels,
+                    datasets: [
+                        { label: 'Alumnos 2024 S/B', data: programasData.alumnos2024, backgroundColor: color2024 },
+                        { label: 'Alumnos 2025 S/B', data: programasData.alumnos2025, backgroundColor: color2025 }
+                    ]
+                },
+                options: { ...barChartOptions, plugins: { ...barChartOptions.plugins, tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${formatNumber(c.raw)}`}}}}
             });
-        }
-        
-        const formatCurrencyShort = (value) => {
-            const sign = value < 0 ? '-' : '';
-            const absValue = Math.abs(value);
-
-            if (absValue >= 1e6) { 
-                const millions = Math.floor(absValue / 1e6);
-                return `${sign}$${millions.toLocaleString('es-CL')} M`;
-            }
-            return `$${value.toLocaleString('es-CL')}`;
-        };
-
-        function updateInformeKPIs(data) {
-            const kpiContainer = document.getElementById('informe-kpis');
-            let totalMeta, totalAvance, totalBrecha, totalPercent;
-
-            if (currentFilter === 'Todos') {
-                // --- ¡CAMBIO REALIZADO AQUÍ! ---
-                totalMeta = 1860000000;
-                totalAvance = 1463291454;
-                totalBrecha = totalMeta - totalAvance;
-                totalPercent = 79;
-            } else {
-                totalMeta = data.reduce((sum, sede) => sum + sede.meta, 0);
-                totalAvance = data.reduce((sum, sede) => sum + sede.avance, 0);
-                totalBrecha = totalMeta - totalAvance;
-                totalPercent = totalMeta > 0 ? (totalAvance / totalMeta) * 100 : 0;
-            }
-
-            kpiContainer.innerHTML = `
-                <div class="kpi-card-print bg-blue-50 p-4 rounded-lg"><h3 class="text-sm font-semibold text-blue-800">META TOTAL</h3><p class="text-2xl font-bold text-blue-600">${formatCurrencyShort(totalMeta)}</p></div>
-                <div class="kpi-card-print bg-green-50 p-4 rounded-lg"><h3 class="text-sm font-semibold text-green-800">AVANCE TOTAL</h3><p class="text-2xl font-bold text-green-600">${formatCurrencyShort(totalAvance)}</p></div>
-                <div class="kpi-card-print bg-red-50 p-4 rounded-lg"><h3 class="text-sm font-semibold text-red-800">BRECHA</h3><p class="text-2xl font-bold text-red-600">${formatCurrencyShort(totalBrecha)}</p></div>
-                <div class="kpi-card-print bg-yellow-100 p-4 rounded-lg"><h3 class="text-sm font-semibold text-yellow-700">AVANCE GRAL.</h3><p class="text-3xl font-black text-yellow-700">${totalPercent.toFixed(0)}%</p></div>
-            `;
-        }
-
-        function populateVerticalList(containerId, data, colorClass, borderColor) {
-            const container = document.getElementById(containerId);
-            container.style.setProperty('--border-color', borderColor);
-            if (data.length === 0) {
-                container.innerHTML = `<p class="text-center italic text-gray-500 mt-4">Sin sedes en esta categoría.</p>`;
-                return;
-            }
-            container.innerHTML = data.map(sede =>
-                `<div class="sede-item">
-                    <span class="font-semibold text-gray-700">${sede.sede}</span>
-                    <span class="font-bold ${colorClass}">${sede.percent.toFixed(0)}%</span>
-                </div>`
-            ).join('');
-        }
-
-        function populateCompactList(containerId, data, colorClass) {
-            const container = document.getElementById(containerId);
-            if (data.length === 0) {
-                 container.innerHTML = `<p class="text-center italic text-gray-500 mt-4">Sin sedes en esta categoría.</p>`;
-                 return;
-            }
-            let html = '<div class="columns-2 md:columns-3 lg:columns-4 gap-x-6">';
-            data.forEach(sede => {
-                 html += `<div class="compact-list-item flex justify-between items-baseline">
-                    <span class="font-semibold text-gray-700 text-sm">${sede.sede}</span>
-                    <span class="font-bold ${colorClass} text-sm">${sede.percent.toFixed(0)}%</span>
-                 </div>`;
+            
+            const ctxProgramasMonto = document.getElementById('programasMontoChart').getContext('2d');
+            new Chart(ctxProgramasMonto, {
+                type: 'bar',
+                data: {
+                    labels: programasData.labels,
+                    datasets: [
+                        { label: 'Ingresos 2024', data: programasData.monto2024, backgroundColor: color2024 },
+                        { label: 'Ingresos 2025', data: programasData.monto2025, backgroundColor: color2025 }
+                    ]
+                },
+                 options: { ...barChartOptions, plugins: { ...barChartOptions.plugins, tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${formatCurrency(c.raw)}`}}}, scales: { ...barChartOptions.scales, x: { ticks: { callback: (v) => `$${v/1000000}M` }}}}
             });
-            html += '</div>';
-            container.innerHTML = html;
-        }
-
-        // --- LÓGICA DASHBOARD 2 ---
-        const formatCurrency = (value) => new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', minimumFractionDigits: 0 }).format(value);
-        
-        const getProgressColor = (percent) => {
-            if (percent >= 110) return 'bg-emerald-500';
-            if (percent >= 100) return 'bg-green-500';
-            if (percent >= 75) return 'bg-yellow-400';
-            if (percent >= 50) return 'bg-orange-500';
-            return 'bg-red-500';
-        };
-
-        const getMotivationalMessage = (percent) => {
-             if (percent >= 110) return "¡Leyenda! Desbloqueaste todos los bonos. Eres una máquina.";
-             if (percent >= 100) return `¡Meta cumplida! Ahora a seguir sumando para el bono máximo.`;
-             if (percent >= 70) return "¡Vamo a calmarno! Falta poquito, no te caigas ahora.";
-             if (percent >= 30) return "Estás como el 'Zafrada', te falta 'un palito'. ¡A vender!";
-             return "Vamos que se puede... pero póngale weno po'.";
-        };
-        const bonusTiersConfig = [
-             { min: 70, max: 79.999, rate: 0.01, label: '70% - 79%' },
-             { min: 80, max: 89.999, rate: 0.015, label: '80% - 89%' },
-             { min: 90, max: 99.999, rate: 0.02, label: '90% - 99%' },
-             { min: 100, max: 109.999, rate: 0.03, label: '100% - 109%' },
-             { min: 110, max: Infinity, rate: 0.035, label: '110% o más' }
-        ];
-
-        function initDashboard(data) {
-            const listaSedesEl = document.getElementById('lista-sedes');
-            const resumenGeneralEl = document.getElementById('resumen-general');
-            if (!listaSedesEl || !resumenGeneralEl) return;
-
-            listaSedesEl.innerHTML = '';
-            resumenGeneralEl.innerHTML = '';
-
-            const totalMeta = data.reduce((sum, sede) => sum + sede.meta, 0);
-            const totalAvance = data.reduce((sum, sede) => sum + sede.avance, 0);
-            const totalPercent = totalMeta > 0 ? (totalAvance / totalMeta) * 100 : 0;
-
-            resumenGeneralEl.innerHTML = `
-                <div class="bg-white p-6 rounded-xl shadow"><h3 class="text-gray-500 font-semibold">Meta Total</h3><p class="text-3xl font-bold text-gray-800">${formatCurrency(totalMeta)}</p></div>
-                <div class="bg-white p-6 rounded-xl shadow"><h3 class="text-gray-500 font-semibold">Avance Total</h3><p class="text-3xl font-bold text-gray-800">${formatCurrency(totalAvance)}</p></div>
-                <div class="bg-white p-6 rounded-xl shadow"><h3 class="text-gray-500 font-semibold">Cumplimiento General</h3><p class="text-3xl font-bold ${getProgressColor(totalPercent).replace('bg-','text-')}">${totalPercent.toFixed(1)}%</p></div>
-            `;
-
-            const sortedSedes = [...data].sort((a, b) => b.percent - a.percent);
-
-            if (sortedSedes.length === 0) {
-                listaSedesEl.innerHTML = `<p class="text-center text-gray-500 italic col-span-full">No hay sedes para mostrar con el filtro actual.</p>`;
-                return;
-            }
-
-            sortedSedes.forEach(sede => {
-                const card = document.createElement('div');
-                card.className = 'card-sede bg-white p-5 rounded-xl shadow cursor-pointer';
-                card.onclick = () => openModal(sede.id);
-                card.innerHTML = `
-                    <div class="flex justify-between items-center mb-2">
-                        <h3 class="font-bold text-lg text-gray-800">${sede.sede}</h3>
-                        <span class="text-sm font-semibold px-2 py-1 rounded-full ${sede.percent >= 100 ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">${sede.percent.toFixed(0)}%</span>
-                    </div>
-                    <p class="text-sm text-gray-500 mb-3">Meta: ${formatCurrency(sede.meta)}</p>
-                    <div class="w-full bg-gray-200 rounded-full h-2.5">
-                        <div class="h-2.5 rounded-full ${getProgressColor(sede.percent)}" style="width: ${Math.min(sede.percent, 100)}%"></div>
-                    </div>`;
-                listaSedesEl.appendChild(card);
-            });
-        }
-        
-        // --- LÓGICA DEL MODAL ---
-        const modalBackdrop = document.getElementById('modal-backdrop');
-        const modalContentEl = document.getElementById('modal-content');
-        const icons = {
-            achieved: `<svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`,
-            active: `<svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`,
-            nextGoal: `<svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`,
-            locked: `<svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>`
-        };
-        const calculateBonusTiers = (avance, meta) => {
-            const currentPercent = meta > 0 ? (avance / meta) * 100 : 0;
-            let nextGoalMarked = false;
-            return bonusTiersConfig.map(tier => {
-                const requiredSales = meta * (tier.min / 100);
-                const potentialBonus = requiredSales * tier.rate;
-                let status = 'locked';
-                if (currentPercent >= tier.min && currentPercent <= tier.max) {
-                    status = 'active';
-                } else if (currentPercent > tier.max) {
-                    status = 'achieved';
-                } else if (!nextGoalMarked && currentPercent < tier.min) {
-                    status = 'nextGoal';
-                    nextGoalMarked = true;
-                }
-                return { ...tier, requiredSales, potentialBonus, status };
-            });
-        };
-        window.openModal = (sedeId) => {
-            const sede = performanceData.find(s => s.id === sedeId);
-            if (!sede) return;
-
-            document.getElementById('modal-sede-nombre').textContent = sede.sede;
-            const bonusTiers = calculateBonusTiers(sede.avance, sede.meta);
-            const activeTier = bonusTiers.find(t => t.status === 'active');
-            const nextTier = bonusTiers.find(t => t.status === 'nextGoal');
-
-            let nextGoalHTML = '';
-            if (nextTier) {
-                const needed = nextTier.requiredSales - sede.avance;
-                nextGoalHTML = `<div class="bg-blue-50 border-2 border-blue-200 p-4 rounded-xl text-center flex flex-col justify-center h-full"><p class="text-sm text-blue-600 uppercase">Falta para Siguiente Bono</p><p class="text-2xl font-bold text-blue-800">${formatCurrency(needed)}</p><p class="text-sm text-blue-500">para el bono del ${nextTier.label}</p></div>`;
-            } else {
-                 nextGoalHTML = `<div class="bg-purple-50 border-2 border-purple-200 p-4 rounded-xl text-center flex flex-col justify-center h-full"><p class="text-sm text-purple-600 uppercase">¡Felicidades!</p><p class="text-xl font-bold text-purple-800">Alcanzaste el bono máximo</p></div>`;
-            }
-            const metricsHTML = `<div class="bg-slate-100 p-6 rounded-xl"><h4 class="text-md font-semibold text-gray-700 mb-4 text-center">Estado Actual</h4><div class="grid grid-cols-1 md:grid-cols-3 gap-4"><div class="bg-white p-4 rounded-xl text-center flex flex-col justify-center h-full"><p class="text-sm text-gray-500 uppercase">Avance Actual</p><p class="text-2xl font-bold text-gray-800">${formatCurrency(sede.avance)}</p></div><div class="bg-white p-4 rounded-xl text-center flex flex-col justify-center h-full"><p class="text-sm text-green-600 uppercase">Bono Actual</p><p class="text-2xl font-bold text-green-700">${activeTier ? activeTier.label : 'Ninguno'}</p></div>${nextGoalHTML}</div></div>`;
-            const bonusTableHTML = `<div><h4 class="text-lg font-semibold text-gray-800 mb-4 text-center">Escalera de Bonos</h4><div class="space-y-2 text-sm">${bonusTiers.map(tier => {const statusClasses={achieved:'bg-slate-50 text-gray-400',active:'bg-green-50 text-green-800 border-2 border-green-300',nextGoal:'bg-blue-50 text-blue-800 border-2 border-blue-300 tier-next-goal',locked:'bg-slate-50 text-gray-500'}; const bonusPercentText=(tier.rate*100).toLocaleString('es-CL',{maximumFractionDigits:1}); return `<div class="flex items-center p-3 rounded-lg transition-all duration-300 ${statusClasses[tier.status]}"><div class="w-8 flex-shrink-0">${icons[tier.status]}</div><div class="flex-1 ml-3"><span class="font-bold ${tier.status==='achieved'?'line-through':''}">${"Bono "+tier.label}</span><span class="text-xs block ${tier.status==='achieved'?'line-through':''}">Venta mín: ${formatCurrency(tier.requiredSales)}</span></div><div class="text-right ml-2"><span class="font-bold text-lg ${tier.status==='achieved'?'line-through':''}">${formatCurrency(tier.potentialBonus)}</span><span class="text-xs block ${tier.status==='achieved'?'line-through':''}">Bono ${bonusPercentText}%</span></div></div>`}).join('')}</div></div>`;
-            const message = getMotivationalMessage(sede.percent);
-            const motivationHTML = `<div class="mt-6 text-center bg-slate-100 p-6 rounded-xl flex items-center justify-center min-h-[8rem]"><p class="text-xl font-medium text-gray-600 italic">"${message}"</p></div>`;
-
-            modalContentEl.innerHTML = `${metricsHTML}${bonusTableHTML}${motivationHTML}`;
-            modalBackdrop.classList.remove('hidden');
-            setTimeout(() => {
-                modalBackdrop.classList.remove('opacity-0');
-                document.getElementById('modal-panel').classList.remove('scale-95', 'opacity-0');
-            }, 10);
-        };
-        window.closeModal = () => {
-            modalBackdrop.classList.add('opacity-0');
-            document.getElementById('modal-panel').classList.add('scale-95', 'opacity-0');
-            setTimeout(() => {
-                modalBackdrop.classList.add('hidden');
-            }, 300);
-        };
-        
-        // --- INICIALIZACIÓN ---
-        document.addEventListener('DOMContentLoaded', () => {
-            // Iniciar con la pestaña y el filtro por defecto
-            switchTab('informe');
-            applyFilter('Todos');
         });
     </script>
 </body>
